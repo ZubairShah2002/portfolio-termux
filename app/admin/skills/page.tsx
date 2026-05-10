@@ -5,34 +5,43 @@ import { getAdminAuth, getSkills, saveSkills, newId } from '@/lib/store'
 import type { Skill } from '@/data/mock'
 import { PageHeader, Btn, Input, ColorPicker, TagInput, Modal, Toast, Row, Empty } from '@/components/admin/AdminUI'
 
-const BLANK: Omit<Skill,'id'> = { category:'', items:[], color:'#6ee7b7', order:0 }
+const BLANK: Omit<Skill, 'id'> = { category: '', items: [], color: '#6ee7b7', order: 0 }
 
 export default function SkillsPage() {
   const router = useRouter()
   const [items, setItems] = useState<Skill[]>([])
   const [modal, setModal] = useState(false)
-  const [editing, setEditing] = useState<Skill|null>(null)
-  const [form, setForm] = useState(BLANK)
-  const [toast, setToast] = useState<{msg:string;type:'success'|'error'}|null>(null)
+  const [editing, setEditing] = useState<Skill | null>(null)
+  const [form, setForm] = useState<Omit<Skill, 'id'>>(BLANK)
+  const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null)
 
-  useEffect(() => { if (!getAdminAuth()) { router.push('/admin/login'); return }; setItems(getSkills()) }, [router])
+  useEffect(() => {
+    if (!getAdminAuth()) { router.push('/admin/login'); return }
+    setItems(getSkills())
+  }, [router])
 
   const openNew = () => { setEditing(null); setForm({ ...BLANK, order: items.length }); setModal(true) }
-  const openEdit = (s: Skill) => { setEditing(s); setForm({ category:s.category, items:[...s.items], color:s.color, order:s.order }); setModal(true) }
+  const openEdit = (s: Skill) => {
+    setEditing(s)
+    setForm({ category: s.category, items: [...s.items], color: s.color, order: s.order })
+    setModal(true)
+  }
   const close = () => { setModal(false); setEditing(null) }
-  const set = (k: keyof typeof BLANK) => (v: any) => setForm(f => ({ ...f, [k]: v }))
+
+  const set = <K extends keyof typeof BLANK>(k: K) => (v: (typeof BLANK)[K]) =>
+    setForm(f => ({ ...f, [k]: v }))
 
   const save = (e: React.FormEvent) => {
     e.preventDefault()
-    let updated: Skill[]
-    if (editing) updated = items.map(i => i.id === editing.id ? { ...editing, ...form } : i)
-    else updated = [...items, { id: newId(), ...form }]
+    const updated = editing
+      ? items.map(i => (i.id === editing.id ? { ...editing, ...form } : i))
+      : [...items, { id: newId(), ...form }]
     saveSkills(updated); setItems(updated); close()
-    setToast({ msg: editing ? 'Updated!' : 'Created!', type: 'success' })
+    setToast({ msg: editing ? 'Skill updated!' : 'Skill category created!', type: 'success' })
   }
 
   const del = (id: string, cat: string) => {
-    if (!confirm(`Delete "${cat}"?`)) return
+    if (!confirm(`Delete "${cat}" category?`)) return
     const updated = items.filter(i => i.id !== id)
     saveSkills(updated); setItems(updated)
     setToast({ msg: 'Deleted', type: 'success' })
@@ -40,25 +49,37 @@ export default function SkillsPage() {
 
   return (
     <div>
-      <PageHeader title="Skills" subtitle={`${items.length} categories`} action={<Btn onClick={openNew}>+ Add Category</Btn>} />
-      {items.length === 0 ? <Empty label="Skill Category" onAdd={openNew} /> : items.map(s => (
-        <Row key={s.id} onClick={() => openEdit(s)}>
-          <div style={{ width: 10, height: 10, borderRadius: '50%', background: s.color, boxShadow: `0 0 7px ${s.color}`, flexShrink: 0 }} />
-          <div style={{ flex: 1 }}>
-            <span style={{ color: 'white', fontWeight: 700 }}>{s.category}</span>
-            <div style={{ display: 'flex', gap: 5, marginTop: 5, flexWrap: 'wrap' }}>
-              {s.items.map(t => <span key={t} style={{ fontSize: 10, padding: '2px 6px', borderRadius: 5, background: `${s.color}12`, color: s.color }}>{t}</span>)}
+      <PageHeader
+        title="Skills"
+        subtitle={`${items.length} skill categor${items.length !== 1 ? 'ies' : 'y'}`}
+        action={<Btn onClick={openNew}>+ Add Category</Btn>}
+      />
+
+      {items.length === 0 ? (
+        <Empty label="Skill Category" onAdd={openNew} />
+      ) : (
+        items.map(sk => (
+          <Row key={sk.id} onClick={() => openEdit(sk)}>
+            <div style={{ width: 10, height: 10, borderRadius: '50%', background: sk.color, boxShadow: `0 0 7px ${sk.color}`, flexShrink: 0 }} />
+            <div style={{ flex: 1 }}>
+              <span style={{ color: 'white', fontWeight: 700 }}>{sk.category}</span>
+              <div style={{ display: 'flex', gap: 5, marginTop: 5, flexWrap: 'wrap' }}>
+                {sk.items.map(t => (
+                  <span key={t} style={{ fontSize: 10, padding: '2px 6px', borderRadius: 5, background: `${sk.color}12`, color: sk.color }}>{t}</span>
+                ))}
+              </div>
             </div>
-          </div>
-          <div style={{ display: 'flex', gap: 7 }}>
-            <Btn onClick={ev => { ev?.stopPropagation(); openEdit(s) }} variant="secondary" size="sm">Edit</Btn>
-            <Btn onClick={ev => { ev?.stopPropagation(); del(s.id, s.category) }} variant="danger" size="sm">Delete</Btn>
-          </div>
-        </Row>
-      ))}
-      <Modal open={modal} onClose={close} title={editing ? 'Edit Category' : 'New Skill Category'}>
+            <div style={{ display: 'flex', gap: 7 }}>
+              <Btn onClick={e => { e?.stopPropagation(); openEdit(sk) }} variant="secondary" size="sm">Edit</Btn>
+              <Btn onClick={e => { e?.stopPropagation(); del(sk.id, sk.category) }} variant="danger" size="sm">Delete</Btn>
+            </div>
+          </Row>
+        ))
+      )}
+
+      <Modal open={modal} onClose={close} title={editing ? 'Edit Skill Category' : 'New Skill Category'}>
         <form onSubmit={save}>
-          <Input label="Category Name" value={form.category} onChange={set('category')} required placeholder="Frontend, Backend..." />
+          <Input label="Category Name" value={form.category} onChange={set('category')} required placeholder="Quality Control, Frontend, Backend..." />
           <TagInput label="Skills / Technologies" value={form.items} onChange={set('items')} placeholder="Add skill, press Enter" />
           <ColorPicker label="Accent Color" value={form.color} onChange={set('color')} />
           <div style={{ display: 'flex', gap: 9, justifyContent: 'flex-end' }}>
@@ -67,6 +88,7 @@ export default function SkillsPage() {
           </div>
         </form>
       </Modal>
+
       {toast && <Toast message={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   )

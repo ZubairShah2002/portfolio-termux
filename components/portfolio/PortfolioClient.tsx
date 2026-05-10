@@ -121,6 +121,16 @@ function MagBtn({ children, href, primary }: { children: React.ReactNode; href: 
     })
   }
 
+  const handleMouseEnter = (e: React.MouseEvent) => {
+    const t = e.currentTarget as HTMLElement
+    if (primary) {
+      t.style.background = '#6ee7b7'
+      t.style.boxShadow = '0 0 70px rgba(110,231,183,0.55)'
+    } else {
+      t.style.background = 'rgba(255,255,255,0.08)'
+    }
+  }
+
   const handleMouseLeave = (e: React.MouseEvent) => {
     setPos({ x: 0, y: 0 })
     const t = e.currentTarget as HTMLElement
@@ -129,16 +139,6 @@ function MagBtn({ children, href, primary }: { children: React.ReactNode; href: 
       t.style.boxShadow = '0 0 40px rgba(110,231,183,0.35)'
     } else {
       t.style.background = 'rgba(255,255,255,0.028)'
-    }
-  }
-
-  const handleMouseEnter = (e: React.MouseEvent) => {
-    const t = e.currentTarget as HTMLElement
-    if (primary) {
-      t.style.background = '#6ee7b7'
-      t.style.boxShadow = '0 0 70px rgba(110,231,183,0.55)'
-    } else {
-      t.style.background = 'rgba(255,255,255,0.08)'
     }
   }
 
@@ -177,13 +177,11 @@ function MagBtn({ children, href, primary }: { children: React.ReactNode; href: 
 function Background({ mouse }: { mouse: { x: number; y: number } }) {
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
-      {/* Grid */}
       <div style={{
         position: 'absolute', inset: 0, opacity: 0.025,
         backgroundImage: 'linear-gradient(rgba(255,255,255,0.9) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.9) 1px,transparent 1px)',
         backgroundSize: '64px 64px',
       }} />
-      {/* Mouse orb */}
       <div style={{
         position: 'absolute', width: 700, height: 700, borderRadius: '50%',
         filter: 'blur(140px)', opacity: 0.06,
@@ -191,7 +189,6 @@ function Background({ mouse }: { mouse: { x: number; y: number } }) {
         left: mouse.x - 350, top: mouse.y - 350,
         transition: 'left 1.2s ease-out, top 1.2s ease-out',
       }} />
-      {/* Static orbs */}
       <div style={{ position: 'absolute', top: -200, right: -200, width: 800, height: 800, borderRadius: '50%', filter: 'blur(160px)', opacity: 0.05, background: 'radial-gradient(circle,#a78bfa,#ec4899)' }} />
       <div style={{ position: 'absolute', bottom: -200, left: -100, width: 700, height: 700, borderRadius: '50%', filter: 'blur(130px)', opacity: 0.05, background: 'radial-gradient(circle,#38bdf8,#6ee7b7)' }} />
     </div>
@@ -218,8 +215,9 @@ function Navbar({ scrollY }: { scrollY: number }) {
         boxShadow: scrolled ? '0 8px 40px rgba(0,0,0,0.5)' : 'none',
         transition: 'all 0.5s ease',
       }}>
+        {/* Logo — ZS initials */}
         <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: '-0.04em', color: 'white' }}>
-          <span style={{ color: '#6ee7b7' }}>A</span>C
+          <span style={{ color: '#6ee7b7' }}>Z</span>S
           <span style={{ color: 'rgba(255,255,255,0.2)' }}>.</span>
         </span>
 
@@ -264,7 +262,6 @@ function Hero({ profile }: { profile: Profile }) {
 
   return (
     <section id="hero" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', padding: '0 24px' }}>
-      {/* Concentric rings */}
       {[360, 560, 760, 960].map((sz, i) => (
         <div key={i} className="animate-pulse-slow" style={{
           position: 'absolute', width: sz, height: sz, borderRadius: '50%',
@@ -273,13 +270,11 @@ function Hero({ profile }: { profile: Profile }) {
         }} />
       ))}
 
-      {/* Content */}
       <div style={{
         position: 'relative', zIndex: 10, textAlign: 'center', maxWidth: 900,
         transform: `translate(${px * 0.22}px,${py * 0.22}px)`,
         transition: 'transform 0.15s ease-out',
       }}>
-        {/* Available badge */}
         {profile.available && (
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
@@ -295,7 +290,6 @@ function Hero({ profile }: { profile: Profile }) {
           </div>
         )}
 
-        {/* Name */}
         <h1 style={{
           fontSize: 'clamp(52px,9.5vw,108px)', fontWeight: 900,
           letterSpacing: '-0.04em', lineHeight: 0.9, color: 'white', marginBottom: 18,
@@ -306,9 +300,8 @@ function Hero({ profile }: { profile: Profile }) {
           {profile.name}
         </h1>
 
-        {/* Title gradient */}
         <div style={{
-          fontSize: 'clamp(18px,2.8vw,30px)', fontWeight: 300, marginBottom: 22,
+          fontSize: 'clamp(16px,2.4vw,26px)', fontWeight: 300, marginBottom: 22,
           background: 'linear-gradient(135deg,#6ee7b7,#a78bfa,#f472b6)',
           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
           opacity: on ? 1 : 0,
@@ -318,10 +311,9 @@ function Hero({ profile }: { profile: Profile }) {
           {profile.title}
         </div>
 
-        {/* Tagline */}
         <p style={{
           color: 'rgba(255,255,255,0.35)', fontSize: 'clamp(15px,1.5vw,18px)',
-          maxWidth: 540, margin: '0 auto 44px', lineHeight: 1.75,
+          maxWidth: 560, margin: '0 auto 44px', lineHeight: 1.75,
           opacity: on ? 1 : 0,
           transform: on ? 'translateY(0)' : 'translateY(28px)',
           transition: 'opacity 0.7s ease 0.3s, transform 0.7s ease 0.3s',
@@ -329,7 +321,6 @@ function Hero({ profile }: { profile: Profile }) {
           {profile.tagline}
         </p>
 
-        {/* CTAs */}
         <div style={{
           display: 'flex', flexWrap: 'wrap', gap: 14, justifyContent: 'center',
           opacity: on ? 1 : 0,
@@ -341,9 +332,8 @@ function Hero({ profile }: { profile: Profile }) {
         </div>
       </div>
 
-      {/* Floating stats */}
       <div style={{ position: 'absolute', right: 24, bottom: 80, display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {[['8+', 'Years'], ['50+', 'Projects'], ['12K', 'Stars']].map(([n, l]) => (
+        {[['2+', 'Years'], ['4+', 'Projects'], ['100%', 'Quality']].map(([n, l]) => (
           <Glass key={l} style={{ padding: '10px 16px', textAlign: 'right' }}>
             <div style={{ fontSize: 24, fontWeight: 900, color: 'white' }}>{n}</div>
             <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase', letterSpacing: '0.3em' }}>{l}</div>
@@ -351,7 +341,6 @@ function Hero({ profile }: { profile: Profile }) {
         ))}
       </div>
 
-      {/* Scroll indicator */}
       <div style={{
         position: 'absolute', bottom: 36, left: '50%', transform: 'translateX(-50%)',
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
@@ -369,10 +358,10 @@ function Hero({ profile }: { profile: Profile }) {
 // ── About ──────────────────────────────────────────────────
 function About({ profile }: { profile: Profile }) {
   const features = [
-    ['⚡', 'Performance', 'Obsessed with sub-10ms UX'],
-    ['🎨', 'Design', 'Pixel-perfect, motion-first'],
-    ['🔐', 'Security', 'Zero-trust architecture'],
-    ['🌍', 'Scale', 'Systems built for billions'],
+    ['🔍', 'Inspection', 'Precise defect detection'],
+    ['📋', 'Documentation', 'Accurate QC reporting'],
+    ['🏭', 'Production', 'Floor-level QC expertise'],
+    ['✅', 'Standards', 'ISO & safety compliance'],
   ]
 
   return (
@@ -382,9 +371,9 @@ function About({ profile }: { profile: Profile }) {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 52, marginTop: 16, alignItems: 'center' }}>
           <div>
             <h2 style={{ fontSize: 'clamp(34px,4.5vw,56px)', fontWeight: 900, lineHeight: 1.05, marginBottom: 22 }}>
-              <span style={{ color: 'white' }}>Engineering the </span>
+              <span style={{ color: 'white' }}>Quality is not an </span>
               <span style={{ background: 'linear-gradient(135deg,#6ee7b7,#a78bfa,#f472b6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                impossible.
+                act — it&apos;s a habit.
               </span>
             </h2>
             <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: 16, lineHeight: 1.8, marginBottom: 18 }}>{profile.bio}</p>
@@ -426,18 +415,16 @@ function ExperienceSection({ items }: { items: Experience[] }) {
       <Reveal>
         <SectionLabel text="Experience" />
         <h2 style={{ fontSize: 'clamp(34px,4.5vw,58px)', fontWeight: 900, color: 'white', margin: '12px 0 52px', lineHeight: 1.05 }}>
-          Where I&apos;ve <span style={{ color: 'rgba(255,255,255,0.2)' }}>Shipped.</span>
+          Where I&apos;ve <span style={{ color: 'rgba(255,255,255,0.2)' }}>Worked.</span>
         </h2>
       </Reveal>
 
       <div style={{ position: 'relative' }}>
-        {/* Timeline line */}
         <div style={{ position: 'absolute', left: 14, top: 8, bottom: 8, width: 1, background: 'linear-gradient(to bottom,rgba(110,231,183,0.4),rgba(167,139,250,0.15),transparent)' }} />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
           {items.map((exp, i) => (
             <Reveal key={exp.id} delay={i * 80}>
               <div style={{ paddingLeft: 48, position: 'relative' }}>
-                {/* Dot */}
                 <div style={{
                   position: 'absolute', left: 6, top: 20, width: 17, height: 17, borderRadius: '50%',
                   border: `2px solid ${exp.color}`, display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -480,7 +467,7 @@ function SkillsSection({ items }: { items: Skill[] }) {
       <Reveal>
         <SectionLabel text="Skills" />
         <h2 style={{ fontSize: 'clamp(34px,4.5vw,58px)', fontWeight: 900, color: 'white', margin: '12px 0 52px', lineHeight: 1.05 }}>
-          Tech <span style={{ color: 'rgba(255,255,255,0.2)' }}>Arsenal.</span>
+          My <span style={{ color: 'rgba(255,255,255,0.2)' }}>Expertise.</span>
         </h2>
       </Reveal>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 18 }}>
@@ -597,17 +584,16 @@ function TravelsSection({ items }: { items: Travel[] }) {
   return (
     <section id="travels" style={{ padding: '120px 24px', maxWidth: 1100, margin: '0 auto' }}>
       <Reveal>
-        <SectionLabel text="Audit Travel" />
+        <SectionLabel text="Locations" />
         <h2 style={{ fontSize: 'clamp(34px,4.5vw,58px)', fontWeight: 900, color: 'white', margin: '12px 0 52px', lineHeight: 1.05 }}>
-          Where I&apos;ve <span style={{ color: 'rgba(255,255,255,0.2)' }}>Traveled.</span>
+          Where I&apos;ve <span style={{ color: 'rgba(255,255,255,0.2)' }}>Been.</span>
         </h2>
       </Reveal>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 22, alignItems: 'start' }}>
-        {/* Map */}
         <Glass style={{ height: 300, position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 30% 60%, rgba(110,231,183,0.06) 0%, transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(167,139,250,0.06) 0%, transparent 60%)' }} />
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: 'rgba(255,255,255,0.07)', fontSize: 11, letterSpacing: '0.5em', textTransform: 'uppercase' }}>World Map</span>
+            <span style={{ color: 'rgba(255,255,255,0.07)', fontSize: 11, letterSpacing: '0.5em', textTransform: 'uppercase' }}>Malaysia Map</span>
           </div>
           {items.map((t, i) => (
             <button
@@ -629,7 +615,6 @@ function TravelsSection({ items }: { items: Travel[] }) {
           ))}
         </Glass>
 
-        {/* Location list */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
           {items.map((t, i) => (
             <Glass
@@ -736,18 +721,17 @@ function ContactSection({ profile }: { profile: Profile }) {
       <Reveal>
         <SectionLabel text="Contact" />
         <h2 style={{ fontSize: 'clamp(32px,4.5vw,56px)', fontWeight: 900, lineHeight: 1.05, marginBottom: 14 }}>
-          <span style={{ color: 'white' }}>Let&apos;s build </span>
+          <span style={{ color: 'white' }}>Let&apos;s work </span>
           <span style={{ background: 'linear-gradient(135deg,#6ee7b7,#a78bfa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            something legendary.
+            together.
           </span>
         </h2>
         <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 16, marginBottom: 44 }}>
-          Currently open to select senior &amp; staff engagements.
+          Open to QC consulting, project collaboration, and new opportunities.
         </p>
       </Reveal>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 22 }}>
-        {/* Form */}
         <Glass style={{ padding: 30 }}>
           <form onSubmit={handleSubmit}>
             {(['name', 'email'] as const).map(field => (
@@ -774,7 +758,7 @@ function ContactSection({ profile }: { profile: Profile }) {
               <textarea
                 value={form.message}
                 rows={5}
-                placeholder="Tell me about your project..."
+                placeholder="Tell me about your project or opportunity..."
                 onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
                 style={{ ...inputStyle, resize: 'none' }}
                 onFocus={e => { e.target.style.borderColor = 'rgba(110,231,183,0.35)'; e.target.style.background = 'rgba(255,255,255,0.055)' }}
@@ -799,7 +783,6 @@ function ContactSection({ profile }: { profile: Profile }) {
           </form>
         </Glass>
 
-        {/* Social links */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {socials.filter(([, v]) => v).map(([label, value, color]) => (
             <Glass
@@ -814,9 +797,9 @@ function ContactSection({ profile }: { profile: Profile }) {
           ))}
 
           <Glass style={{ padding: 18, background: 'linear-gradient(135deg,rgba(110,231,183,0.04),rgba(167,139,250,0.04))', borderColor: 'rgba(110,231,183,0.12)' }}>
-            <div style={{ color: '#6ee7b7', fontWeight: 700, fontSize: 13, marginBottom: 5 }}>Open to Work</div>
+            <div style={{ color: '#6ee7b7', fontWeight: 700, fontSize: 13, marginBottom: 5 }}>Open to Opportunities</div>
             <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, lineHeight: 1.6 }}>
-              Senior/staff roles, consulting &amp; fractional CTO engagements.
+              QC consulting, production audits, and project collaboration welcome.
             </div>
           </Glass>
         </div>
@@ -850,7 +833,6 @@ export default function PortfolioClient({ profile, experience, skills, projects,
         <div style={{ color: 'rgba(255,255,255,0.2)', fontSize: 10, letterSpacing: '0.5em', textTransform: 'uppercase' }}>Loading</div>
       </div>
 
-      {/* Main content */}
       <div style={{ opacity: loading ? 0 : 1, transition: 'opacity 0.7s ease' }}>
         <Background mouse={mouse} />
         <Navbar scrollY={scrollY} />
@@ -864,8 +846,8 @@ export default function PortfolioClient({ profile, experience, skills, projects,
         <ContactSection profile={profile} />
         <footer style={{ borderTop: '1px solid rgba(255,255,255,0.05)', padding: '36px 24px', textAlign: 'center' }}>
           <div style={{ color: 'rgba(255,255,255,0.15)', fontSize: 13 }}>
-            © {new Date().getFullYear()} {profile.name} ·{' '}
-            <span style={{ color: 'rgba(110,231,183,0.4)' }}>Every pixel intentional.</span>
+            © {new Date().getFullYear()} {profile.name} · QC Mattress @ BerexTech MY ·{' '}
+            <span style={{ color: 'rgba(110,231,183,0.4)' }}>Every detail matters.</span>
           </div>
         </footer>
       </div>
