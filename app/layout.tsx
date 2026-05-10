@@ -2,13 +2,13 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Alex Chen — Staff Software Engineer',
-  description: 'Staff Software Engineer. 8+ years building infrastructure and interfaces used by millions.',
+  title: 'Zubair Shah — QC Mattress ( Berex Tech MY )',
+  description: 'Quality Control professional with 5 years of comprehensive experience in IQC, OQC, line QC, and DQC, committed to delivering consistent product quality and manufacturing excellence.',
   keywords: ['Software Engineer', 'Full Stack', 'Next.js', 'React', 'TypeScript', 'Portfolio'],
-  authors: [{ name: 'Alex Chen' }],
+  authors: [{ name: 'Zubair Shah' }],
   openGraph: {
-    title: 'Alex Chen — Staff Software Engineer',
-    description: 'Staff Software Engineer. 8+ years building infrastructure and interfaces used by millions.',
+    title: 'Zubair Shah — QC Mattress ( Berex Tech MY )',
+    description: 'Quality Control professional with 5 years of comprehensive experience in IQC, OQC, line QC, and DQC, committed to delivering consistent product quality and manufacturing excellence.',
     type: 'website',
   },
   robots: { index: true, follow: true },

@@ -91,7 +91,7 @@ export const mockProfile: Profile = {
   bio: 'Quality Control professional with 5 years of comprehensive experience in IQC, OQC, line QC, and DQC, committed to delivering consistent product quality and manufacturing excellence.',
   bioExtra: "Quality Control professional with 5 years of comprehensive experience in IQC, OQC, line QC, and DQC, committed to delivering consistent product quality and manufacturing excellence.",
   email: 'Zubairpro3415@gmail.com',
-  github: 'github.com/zubair2002',
+  github: 'github.com/zubairshah2002',
   linkedin: '-',
   twitter: '-',
   website: 'Zubair.dev',
