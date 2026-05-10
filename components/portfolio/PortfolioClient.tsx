@@ -177,42 +177,20 @@ function MagBtn({ children, href, primary }: { children: React.ReactNode; href: 
 function Background({ mouse }: { mouse: { x: number; y: number } }) {
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
-      {/* subtle dotted grid (replaces hard square grid) */}
       <div style={{
-        position: 'absolute', inset: 0, opacity: 0.4,
-        backgroundImage: 'radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px)',
-        backgroundSize: '28px 28px',
-        maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 80%)',
-        WebkitMaskImage: 'radial-gradient(ellipse at center, black 40%, transparent 80%)',
+        position: 'absolute', inset: 0, opacity: 0.025,
+        backgroundImage: 'linear-gradient(rgba(255,255,255,0.9) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.9) 1px,transparent 1px)',
+        backgroundSize: '64px 64px',
       }} />
-      {/* mouse-following cursor light */}
       <div style={{
         position: 'absolute', width: 700, height: 700, borderRadius: '50%',
-        filter: 'blur(140px)', opacity: 0.08,
+        filter: 'blur(140px)', opacity: 0.06,
         background: 'radial-gradient(circle,#6ee7b7,#3b82f6)',
         left: mouse.x - 350, top: mouse.y - 350,
         transition: 'left 1.2s ease-out, top 1.2s ease-out',
       }} />
-      {/* morphing blob top-right */}
-      <div className="animate-blob" style={{
-        position: 'absolute', top: -260, right: -200, width: 720, height: 720,
-        filter: 'blur(160px)', opacity: 0.07,
-        background: 'radial-gradient(circle,#a78bfa,#ec4899)',
-      }} />
-      {/* morphing blob bottom-left */}
-      <div className="animate-blob" style={{
-        position: 'absolute', bottom: -240, left: -160, width: 680, height: 680,
-        filter: 'blur(140px)', opacity: 0.07,
-        background: 'radial-gradient(circle,#38bdf8,#6ee7b7)',
-        animationDelay: '4s',
-      }} />
-      {/* morphing blob center accent */}
-      <div className="animate-blob" style={{
-        position: 'absolute', top: '40%', left: '40%', width: 480, height: 480,
-        filter: 'blur(150px)', opacity: 0.04,
-        background: 'radial-gradient(circle,#f472b6,#a78bfa)',
-        animationDelay: '8s',
-      }} />
+      <div style={{ position: 'absolute', top: -200, right: -200, width: 800, height: 800, borderRadius: '50%', filter: 'blur(160px)', opacity: 0.05, background: 'radial-gradient(circle,#a78bfa,#ec4899)' }} />
+      <div style={{ position: 'absolute', bottom: -200, left: -100, width: 700, height: 700, borderRadius: '50%', filter: 'blur(130px)', opacity: 0.05, background: 'radial-gradient(circle,#38bdf8,#6ee7b7)' }} />
     </div>
   )
 }
@@ -221,14 +199,6 @@ function Background({ mouse }: { mouse: { x: number; y: number } }) {
 function Navbar({ scrollY }: { scrollY: number }) {
   const scrolled = scrollY > 60
   const navLinks = ['About', 'Experience', 'Projects', 'Skills', 'Contact']
-  const [isDesktop, setIsDesktop] = useState(true)
-
-  useEffect(() => {
-    const check = () => setIsDesktop(window.innerWidth >= 720)
-    check()
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
-  }, [])
 
   return (
     <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, display: 'flex', justifyContent: 'center', paddingTop: 14, pointerEvents: 'none' }}>
@@ -251,21 +221,19 @@ function Navbar({ scrollY }: { scrollY: number }) {
           <span style={{ color: 'rgba(255,255,255,0.2)' }}>.</span>
         </span>
 
-        {isDesktop && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 22 }}>
-            {navLinks.map(n => (
-              <a
-                key={n}
-                href={`#${n.toLowerCase()}`}
-                style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, fontWeight: 500, textDecoration: 'none', transition: 'color 0.2s' }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#6ee7b7')}
-                onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.4)')}
-              >
-                {n}
-              </a>
-            ))}
-          </div>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 22, flexWrap: 'wrap' }}>
+          {navLinks.map(n => (
+            <a
+              key={n}
+              href={`#${n.toLowerCase()}`}
+              style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, fontWeight: 500, textDecoration: 'none', transition: 'color 0.2s' }}
+              onMouseEnter={e => (e.currentTarget.style.color = '#6ee7b7')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.4)')}
+            >
+              {n}
+            </a>
+          ))}
+        </div>
 
         <a
           href="#contact"
@@ -285,16 +253,12 @@ function Hero({ profile }: { profile: Profile }) {
   const [on, setOn] = useState(false)
   const mouse = useMousePos()
 
-  useEffect(() => { const t = setTimeout(() => setOn(true), 200); return () => clearTimeout(t) }, [])
+  useEffect(() => { setTimeout(() => setOn(true), 200) }, [])
 
   const W = typeof window !== 'undefined' ? window.innerWidth : 1200
   const H = typeof window !== 'undefined' ? window.innerHeight : 800
   const px = (mouse.x / W - 0.5) * 14
   const py = (mouse.y / H - 0.5) * 14
-
-  // Welcome word animated letter-by-letter
-  const welcome = 'Hello, I am'
-  const initials = (profile.name || 'ZS').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase()
 
   return (
     <section id="hero" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', padding: '0 24px' }}>
@@ -311,46 +275,12 @@ function Hero({ profile }: { profile: Profile }) {
         transform: `translate(${px * 0.22}px,${py * 0.22}px)`,
         transition: 'transform 0.15s ease-out',
       }}>
-        {/* Animated avatar */}
-        <div style={{
-          display: 'flex', justifyContent: 'center', marginBottom: 26,
-          opacity: on ? 1 : 0,
-          transform: on ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.9)',
-          transition: 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.34,1.56,0.64,1)',
-        }}>
-          <div className="animate-float-y" style={{ position: 'relative', width: 124, height: 124 }}>
-            {/* rotating gradient ring */}
-            <div className="animate-spin-ring" style={{
-              position: 'absolute', inset: -3, borderRadius: '50%',
-              background: 'conic-gradient(from 0deg, #6ee7b7, #a78bfa, #f472b6, #6ee7b7)',
-              animationDuration: '6s', filter: 'blur(0.5px)',
-            }} />
-            <div className="animate-avatar-glow" style={{
-              position: 'absolute', inset: 0, borderRadius: '50%',
-              background: '#07080a',
-              padding: 3,
-            }}>
-              <div style={{
-                width: '100%', height: '100%', borderRadius: '50%',
-                background: profile.avatar
-                  ? `url(${profile.avatar}) center/cover no-repeat`
-                  : 'linear-gradient(135deg,#0f1115,#1a1d24)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: '#6ee7b7', fontWeight: 900, fontSize: 36, letterSpacing: '-0.04em',
-                border: '1px solid rgba(255,255,255,0.08)',
-              }}>
-                {!profile.avatar && initials}
-              </div>
-            </div>
-          </div>
-        </div>
-
         {profile.available && (
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
             padding: '8px 18px', borderRadius: 999,
             border: '1px solid rgba(110,231,183,0.22)', background: 'rgba(110,231,183,0.06)',
-            color: '#6ee7b7', fontSize: 13, fontWeight: 600, marginBottom: 22,
+            color: '#6ee7b7', fontSize: 13, fontWeight: 600, marginBottom: 28,
             opacity: on ? 1 : 0,
             transform: on ? 'translateY(0)' : 'translateY(14px)',
             transition: 'opacity 0.7s ease, transform 0.7s ease',
@@ -360,30 +290,12 @@ function Hero({ profile }: { profile: Profile }) {
           </div>
         )}
 
-        {/* Animated welcome line, letter-by-letter */}
-        <div style={{
-          fontSize: 14, fontWeight: 500, letterSpacing: '0.3em', textTransform: 'uppercase',
-          color: 'rgba(255,255,255,0.45)', marginBottom: 14,
-        }} aria-label={welcome}>
-          {welcome.split('').map((ch, i) => (
-            <span key={i} style={{
-              display: 'inline-block',
-              opacity: on ? 1 : 0,
-              transform: on ? 'translateY(0)' : 'translateY(10px)',
-              transition: `opacity 0.4s ease ${i * 35}ms, transform 0.4s ease ${i * 35}ms`,
-              whiteSpace: ch === ' ' ? 'pre' : 'normal',
-            }}>{ch}</span>
-          ))}
-        </div>
-
-        <h1 className="animate-gradient-shift" style={{
+        <h1 style={{
           fontSize: 'clamp(52px,9.5vw,108px)', fontWeight: 900,
-          letterSpacing: '-0.04em', lineHeight: 0.9, marginBottom: 18,
-          background: 'linear-gradient(135deg,#ffffff 0%,#ffffff 40%,#6ee7b7 60%,#a78bfa 80%,#ffffff 100%)',
-          WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          letterSpacing: '-0.04em', lineHeight: 0.9, color: 'white', marginBottom: 18,
           opacity: on ? 1 : 0,
           transform: on ? 'translateY(0)' : 'translateY(28px)',
-          transition: 'opacity 0.7s ease 0.3s, transform 0.7s ease 0.3s',
+          transition: 'opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s',
         }}>
           {profile.name}
         </h1>
@@ -394,17 +306,17 @@ function Hero({ profile }: { profile: Profile }) {
           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
           opacity: on ? 1 : 0,
           transform: on ? 'translateY(0)' : 'translateY(28px)',
-          transition: 'opacity 0.7s ease 0.45s, transform 0.7s ease 0.45s',
+          transition: 'opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s',
         }}>
           {profile.title}
         </div>
 
         <p style={{
-          color: 'rgba(255,255,255,0.45)', fontSize: 'clamp(15px,1.5vw,18px)',
+          color: 'rgba(255,255,255,0.35)', fontSize: 'clamp(15px,1.5vw,18px)',
           maxWidth: 560, margin: '0 auto 44px', lineHeight: 1.75,
           opacity: on ? 1 : 0,
           transform: on ? 'translateY(0)' : 'translateY(28px)',
-          transition: 'opacity 0.7s ease 0.6s, transform 0.7s ease 0.6s',
+          transition: 'opacity 0.7s ease 0.3s, transform 0.7s ease 0.3s',
         }}>
           {profile.tagline}
         </p>
@@ -413,18 +325,14 @@ function Hero({ profile }: { profile: Profile }) {
           display: 'flex', flexWrap: 'wrap', gap: 14, justifyContent: 'center',
           opacity: on ? 1 : 0,
           transform: on ? 'translateY(0)' : 'translateY(28px)',
-          transition: 'opacity 0.7s ease 0.75s, transform 0.7s ease 0.75s',
+          transition: 'opacity 0.7s ease 0.5s, transform 0.7s ease 0.5s',
         }}>
           <MagBtn href="#projects" primary>View My Work</MagBtn>
           <MagBtn href="#contact">Let&apos;s Connect</MagBtn>
         </div>
       </div>
 
-      <div style={{
-        position: 'absolute', right: 24, bottom: 80,
-        display: typeof window !== 'undefined' && window.innerWidth < 900 ? 'none' : 'flex',
-        flexDirection: 'column', gap: 10,
-      }}>
+      <div style={{ position: 'absolute', right: 24, bottom: 80, display: 'flex', flexDirection: 'column', gap: 10 }}>
         {[['2+', 'Years'], ['4+', 'Projects'], ['100%', 'Quality']].map(([n, l]) => (
           <Glass key={l} style={{ padding: '10px 16px', textAlign: 'right' }}>
             <div style={{ fontSize: 24, fontWeight: 900, color: 'white' }}>{n}</div>
@@ -927,7 +835,6 @@ export default function PortfolioClient({ profile, experience, skills, projects,
 
       <div style={{ opacity: loading ? 0 : 1, transition: 'opacity 0.7s ease' }}>
         <Background mouse={mouse} />
-        <div className="noise-overlay" />
         <Navbar scrollY={scrollY} />
         <Hero profile={profile} />
         <About profile={profile} />
