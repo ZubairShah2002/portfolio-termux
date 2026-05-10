@@ -273,5 +273,5 @@ export const mockTravels: Travel[] = [
 ]
 
 // ── Admin credentials (mock only, no real auth) ────────────
-export const ADMIN_EMAIL = 'admin@portfolio.dev'
-export const ADMIN_PASSWORD = 'admin123'
+export const ADMIN_EMAIL = 'Zubairpro3415@gmail.com'
+export const ADMIN_PASSWORD = 'Zubair1300'
