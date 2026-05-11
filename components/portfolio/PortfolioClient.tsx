@@ -589,39 +589,77 @@ function TravelsSection({ items }: { items: Travel[] }) {
           Where I&apos;ve <span style={{ color: 'rgba(255,255,255,0.2)' }}>Been.</span>
         </h2>
       </Reveal>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 22, alignItems: 'start' }}>
-        <Glass style={{ height: 300, position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 30% 60%, rgba(110,231,183,0.06) 0%, transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(167,139,250,0.06) 0%, transparent 60%)' }} />
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: 'rgba(255,255,255,0.07)', fontSize: 11, letterSpacing: '0.5em', textTransform: 'uppercase' }}>Malaysia Map</span>
-          </div>
-          {items.map((t, i) => (
-            <button
-              key={t.id}
-              onClick={() => setActive(i)}
-              style={{
-                position: 'absolute',
-                left: `${t.mapX}%`, top: `${t.mapY}%`,
-                width: 15, height: 15, borderRadius: '50%',
-                borderWidth: 2, borderStyle: 'solid',
-                borderColor: active === i ? '#6ee7b7' : 'rgba(255,255,255,0.3)',
-                background: active === i ? 'rgba(110,231,183,0.4)' : 'rgba(255,255,255,0.1)',
-                transform: `translate(-50%,-50%) scale(${active === i ? 1.6 : 1})`,
-                boxShadow: active === i ? '0 0 14px #6ee7b7' : 'none',
-                transition: 'all 0.3s',
-                cursor: 'pointer',
-              }}
-            />
-          ))}
-        </Glass>
 
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 22, alignItems: 'start' }}>
+
+     {/* 🌍 WORLD MAP PLACEHOLDER */}
+<Glass
+  style={{
+    height: 300,
+    position: 'relative',
+    overflow: 'hidden',
+    border: '1px solid rgba(110,231,183,0.12)',
+  }}
+>
+
+  {/* background glow */}
+  <div
+    style={{
+      position: 'absolute',
+      inset: 0,
+      background:
+        'radial-gradient(circle at 50% 50%, rgba(110,231,183,0.06), transparent 65%)',
+    }}
+  />
+
+  {/* subtle grid */}
+  <div
+    style={{
+      position: 'absolute',
+      inset: 0,
+      backgroundImage:
+        'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
+      backgroundSize: '40px 40px',
+      opacity: 0.3,
+    }}
+  />
+
+  {/* center text */}
+  <div
+    style={{
+      position: 'absolute',
+      inset: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 2,
+    }}
+  >
+    <span
+      style={{
+        color: 'rgba(255,255,255,0.09)',
+        fontSize: 11,
+        letterSpacing: '0.5em',
+        textTransform: 'uppercase',
+        textAlign: 'center',
+      }}
+    >
+      Malaysia Map
+    </span>
+  </div>
+
+</Glass>
+ 
+
+        {/* 📍 LOCATION LIST */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
           {items.map((t, i) => (
             <Glass
               key={t.id}
               onClick={() => setActive(i)}
               style={{
-                padding: 14, cursor: 'pointer',
+                padding: 14,
+                cursor: 'pointer',
                 borderColor: active === i ? 'rgba(110,231,183,0.25)' : 'rgba(255,255,255,0.07)',
                 background: active === i ? 'rgba(110,231,183,0.04)' : 'rgba(255,255,255,0.028)',
                 transition: 'all 0.3s',
@@ -629,19 +667,38 @@ function TravelsSection({ items }: { items: Travel[] }) {
             >
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 11 }}>
                 <span style={{ fontSize: 22 }}>{t.emoji}</span>
+
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                    <span style={{ fontWeight: 700, fontSize: 14, color: active === i ? '#6ee7b7' : 'white' }}>{t.city}</span>
-                    <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12 }}>{t.country}</span>
+                    <span style={{
+                      fontWeight: 700,
+                      fontSize: 14,
+                      color: active === i ? '#6ee7b7' : 'white'
+                    }}>
+                      {t.city}
+                    </span>
+
+                    <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12 }}>
+                      {t.country}
+                    </span>
                   </div>
+
                   {active === i && (
-                    <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, marginTop: 3, lineHeight: 1.6 }}>{t.description}</p>
+                    <p style={{
+                      color: 'rgba(255,255,255,0.35)',
+                      fontSize: 12,
+                      marginTop: 3,
+                      lineHeight: 1.6
+                    }}>
+                      {t.description}
+                    </p>
                   )}
                 </div>
               </div>
             </Glass>
           ))}
         </div>
+
       </div>
     </section>
   )
@@ -777,7 +834,7 @@ function ContactSection({ profile }: { profile: Profile }) {
                   : { background: '#10b981', color: '#000', border: 'none', boxShadow: '0 0 35px rgba(110,231,183,0.28)' }
                 ),
               }}
-            >
+            >	
               {sent ? '✓ Message Sent!' : 'Send Message →'}
             </button>
           </form>
