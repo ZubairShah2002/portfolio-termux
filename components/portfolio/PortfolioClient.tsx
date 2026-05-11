@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { Profile, Experience, Skill, Project, Certification, Travel } from '@/data/mock'
 
 // ── Hooks ──────────────────────────────────────────────────
@@ -251,35 +252,96 @@ function Navbar({ scrollY }: { scrollY: number }) {
 // ── Hero ───────────────────────────────────────────────────
 function Hero({ profile }: { profile: Profile }) {
   const [on, setOn] = useState(false)
-  const mouse = useMousePos()
+  const parallaxRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => { setTimeout(() => setOn(true), 200) }, [])
 
-  const W = typeof window !== 'undefined' ? window.innerWidth : 1200
-  const H = typeof window !== 'undefined' ? window.innerHeight : 800
-  const px = (mouse.x / W - 0.5) * 14
-  const py = (mouse.y / H - 0.5) * 14
+  // Lightweight parallax — GPU transform only, disabled on touch devices
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (window.matchMedia('(pointer: coarse)').matches) return
+
+    let rafId: number
+    const handleScroll = () => {
+      rafId = requestAnimationFrame(() => {
+        if (!parallaxRef.current) return
+        parallaxRef.current.style.transform = `translate3d(0, ${window.scrollY * 0.3}px, 0)`
+      })
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => { window.removeEventListener('scroll', handleScroll); cancelAnimationFrame(rafId) }
+  }, [])
 
   return (
-    <section id="hero" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', padding: '0 24px' }}>
+    <section id="hero" style={{
+      minHeight: '100svh',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      position: 'relative', overflow: 'hidden', padding: '0 24px',
+    }}>
+      {/* ── Background Image with Parallax ── */}
+      <div
+        ref={parallaxRef}
+        style={{
+          position: 'absolute', inset: 0,
+          willChange: 'transform',
+          transform: 'translate3d(0,0,0)',
+          scale: '1.12', // Prevents edge-reveal during parallax
+        }}
+      >
+        <Image
+          src="/images/hero-bg.jpg"
+          alt=""
+          fill
+          priority
+          quality={80}
+          sizes="100vw"
+          style={{ objectFit: 'cover', objectPosition: 'top center' }}
+        />
+      </div>
+
+      {/* ── Dark overlay for text readability ── */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'rgba(0,0,0,0.62)',
+        zIndex: 1,
+      }} />
+
+      {/* ── Bottom gradient vignette ── */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(to bottom, transparent 20%, rgba(0,0,0,0.25) 50%, rgba(7,8,10,0.85) 100%)',
+        zIndex: 2,
+      }} />
+
+      {/* ── Green atmospheric glow ── */}
+      <div style={{
+        position: 'absolute', top: -160, left: -160,
+        width: 500, height: 500, borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(110,231,183,0.45) 0%, transparent 70%)',
+        filter: 'blur(70px)',
+        opacity: 0.2, zIndex: 3, pointerEvents: 'none',
+      }} />
+
+      {/* ── Decorative rings (from original) ── */}
       {[360, 560, 760, 960].map((sz, i) => (
         <div key={i} className="animate-pulse-slow" style={{
           position: 'absolute', width: sz, height: sz, borderRadius: '50%',
           border: '1px solid rgba(255,255,255,0.03)', pointerEvents: 'none',
           animationDelay: `${i * 0.7}s`, animationDuration: `${5 + i * 1.3}s`,
+          zIndex: 3,
         }} />
       ))}
 
+      {/* ── Hero content ── */}
       <div style={{
         position: 'relative', zIndex: 10, textAlign: 'center', maxWidth: 900,
-        transform: `translate(${px * 0.22}px,${py * 0.22}px)`,
-        transition: 'transform 0.15s ease-out',
       }}>
         {profile.available && (
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
             padding: '8px 18px', borderRadius: 999,
-            border: '1px solid rgba(110,231,183,0.22)', background: 'rgba(110,231,183,0.06)',
+            border: '1px solid rgba(110,231,183,0.22)', background: 'rgba(0,0,0,0.4)',
+            backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
             color: '#6ee7b7', fontSize: 13, fontWeight: 600, marginBottom: 28,
             opacity: on ? 1 : 0,
             transform: on ? 'translateY(0)' : 'translateY(14px)',
@@ -293,6 +355,7 @@ function Hero({ profile }: { profile: Profile }) {
         <h1 style={{
           fontSize: 'clamp(52px,9.5vw,108px)', fontWeight: 900,
           letterSpacing: '-0.04em', lineHeight: 0.9, color: 'white', marginBottom: 18,
+          textShadow: '0 2px 40px rgba(0,0,0,0.5)',
           opacity: on ? 1 : 0,
           transform: on ? 'translateY(0)' : 'translateY(28px)',
           transition: 'opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s',
@@ -312,8 +375,9 @@ function Hero({ profile }: { profile: Profile }) {
         </div>
 
         <p style={{
-          color: 'rgba(255,255,255,0.35)', fontSize: 'clamp(15px,1.5vw,18px)',
+          color: 'rgba(255,255,255,0.55)', fontSize: 'clamp(15px,1.5vw,18px)',
           maxWidth: 560, margin: '0 auto 44px', lineHeight: 1.75,
+          textShadow: '0 1px 12px rgba(0,0,0,0.4)',
           opacity: on ? 1 : 0,
           transform: on ? 'translateY(0)' : 'translateY(28px)',
           transition: 'opacity 0.7s ease 0.3s, transform 0.7s ease 0.3s',
@@ -332,7 +396,8 @@ function Hero({ profile }: { profile: Profile }) {
         </div>
       </div>
 
-      <div style={{ position: 'absolute', right: 24, bottom: 80, display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {/* ── Stats cards (right side) ── */}
+      <div style={{ position: 'absolute', right: 24, bottom: 80, display: 'flex', flexDirection: 'column', gap: 10, zIndex: 10 }}>
         {[['2+', 'Years'], ['4+', 'Projects'], ['100%', 'Quality']].map(([n, l]) => (
           <Glass key={l} style={{ padding: '10px 16px', textAlign: 'right' }}>
             <div style={{ fontSize: 24, fontWeight: 900, color: 'white' }}>{n}</div>
@@ -341,10 +406,11 @@ function Hero({ profile }: { profile: Profile }) {
         ))}
       </div>
 
+      {/* ── Scroll indicator ── */}
       <div style={{
         position: 'absolute', bottom: 36, left: '50%', transform: 'translateX(-50%)',
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-        opacity: on ? 1 : 0, transition: 'opacity 0.7s ease 0.8s',
+        opacity: on ? 1 : 0, transition: 'opacity 0.7s ease 0.8s', zIndex: 10,
       }}>
         <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)', letterSpacing: '0.4em', textTransform: 'uppercase' }}>Scroll</span>
         <div style={{ width: 1, height: 52, background: 'linear-gradient(to bottom, rgba(255,255,255,0.15), transparent)', position: 'relative', overflow: 'hidden' }}>
@@ -589,77 +655,39 @@ function TravelsSection({ items }: { items: Travel[] }) {
           Where I&apos;ve <span style={{ color: 'rgba(255,255,255,0.2)' }}>Been.</span>
         </h2>
       </Reveal>
-
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 22, alignItems: 'start' }}>
+        <Glass style={{ height: 300, position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 30% 60%, rgba(110,231,183,0.06) 0%, transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(167,139,250,0.06) 0%, transparent 60%)' }} />
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ color: 'rgba(255,255,255,0.07)', fontSize: 11, letterSpacing: '0.5em', textTransform: 'uppercase' }}>Malaysia Map</span>
+          </div>
+          {items.map((t, i) => (
+            <button
+              key={t.id}
+              onClick={() => setActive(i)}
+              style={{
+                position: 'absolute',
+                left: `${t.mapX}%`, top: `${t.mapY}%`,
+                width: 15, height: 15, borderRadius: '50%',
+                borderWidth: 2, borderStyle: 'solid',
+                borderColor: active === i ? '#6ee7b7' : 'rgba(255,255,255,0.3)',
+                background: active === i ? 'rgba(110,231,183,0.4)' : 'rgba(255,255,255,0.1)',
+                transform: `translate(-50%,-50%) scale(${active === i ? 1.6 : 1})`,
+                boxShadow: active === i ? '0 0 14px #6ee7b7' : 'none',
+                transition: 'all 0.3s',
+                cursor: 'pointer',
+              }}
+            />
+          ))}
+        </Glass>
 
-     {/* 🌍 WORLD MAP PLACEHOLDER */}
-<Glass
-  style={{
-    height: 300,
-    position: 'relative',
-    overflow: 'hidden',
-    border: '1px solid rgba(110,231,183,0.12)',
-  }}
->
-
-  {/* background glow */}
-  <div
-    style={{
-      position: 'absolute',
-      inset: 0,
-      background:
-        'radial-gradient(circle at 50% 50%, rgba(110,231,183,0.06), transparent 65%)',
-    }}
-  />
-
-  {/* subtle grid */}
-  <div
-    style={{
-      position: 'absolute',
-      inset: 0,
-      backgroundImage:
-        'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
-      backgroundSize: '40px 40px',
-      opacity: 0.3,
-    }}
-  />
-
-  {/* center text */}
-  <div
-    style={{
-      position: 'absolute',
-      inset: 0,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 2,
-    }}
-  >
-    <span
-      style={{
-        color: 'rgba(255,255,255,0.09)',
-        fontSize: 11,
-        letterSpacing: '0.5em',
-        textTransform: 'uppercase',
-        textAlign: 'center',
-      }}
-    >
-      Malaysia Map
-    </span>
-  </div>
-
-</Glass>
- 
-
-        {/* 📍 LOCATION LIST */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
           {items.map((t, i) => (
             <Glass
               key={t.id}
               onClick={() => setActive(i)}
               style={{
-                padding: 14,
-                cursor: 'pointer',
+                padding: 14, cursor: 'pointer',
                 borderColor: active === i ? 'rgba(110,231,183,0.25)' : 'rgba(255,255,255,0.07)',
                 background: active === i ? 'rgba(110,231,183,0.04)' : 'rgba(255,255,255,0.028)',
                 transition: 'all 0.3s',
@@ -667,38 +695,19 @@ function TravelsSection({ items }: { items: Travel[] }) {
             >
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 11 }}>
                 <span style={{ fontSize: 22 }}>{t.emoji}</span>
-
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                    <span style={{
-                      fontWeight: 700,
-                      fontSize: 14,
-                      color: active === i ? '#6ee7b7' : 'white'
-                    }}>
-                      {t.city}
-                    </span>
-
-                    <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12 }}>
-                      {t.country}
-                    </span>
+                    <span style={{ fontWeight: 700, fontSize: 14, color: active === i ? '#6ee7b7' : 'white' }}>{t.city}</span>
+                    <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12 }}>{t.country}</span>
                   </div>
-
                   {active === i && (
-                    <p style={{
-                      color: 'rgba(255,255,255,0.35)',
-                      fontSize: 12,
-                      marginTop: 3,
-                      lineHeight: 1.6
-                    }}>
-                      {t.description}
-                    </p>
+                    <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, marginTop: 3, lineHeight: 1.6 }}>{t.description}</p>
                   )}
                 </div>
               </div>
             </Glass>
           ))}
         </div>
-
       </div>
     </section>
   )
@@ -834,7 +843,7 @@ function ContactSection({ profile }: { profile: Profile }) {
                   : { background: '#10b981', color: '#000', border: 'none', boxShadow: '0 0 35px rgba(110,231,183,0.28)' }
                 ),
               }}
-            >	
+            >
               {sent ? '✓ Message Sent!' : 'Send Message →'}
             </button>
           </form>
