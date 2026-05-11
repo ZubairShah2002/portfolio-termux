@@ -4,9 +4,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-
-  swcMinify: false, // 🔥 penting untuk Termux
 }
 
 module.exports = nextConfig
-
