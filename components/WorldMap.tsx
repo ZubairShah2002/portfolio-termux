@@ -10,8 +10,8 @@ export default function WorldMap() {
     <div className="w-full h-[500px]">
       <ComposableMap>
         <Geographies geography={geoUrl}>
-          {({ geographies }) =>
-            geographies.map((geo) => (
+          {({ geographies }: { geographies: any[] }) =>
+            geographies.map((geo: any) => (
               <Geography
                 key={geo.rsmKey}
                 geography={geo}
